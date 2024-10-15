@@ -1,0 +1,42 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dev:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/development'  # Only run on the development branch
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
+      - name: Run development server
+        run: npm run dev  # Command to run your dev server
+
+  qa:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/qa'  # Only run on the QA branch
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm test  # Run your tests
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'  # Only run on the main branch
+    environment: production  # Specify the production environment
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Deploy to production
+        run: ./deploy.sh  # Your deployment script
